@@ -13,7 +13,6 @@ def preprocess_image(img_path, target_size=(64, 64)):
 def load_dataset(data_dir, target_size=(64, 64)):
     X_list, Y_list = [], []
     classes = sorted(os.listdir(data_dir))
-    print(classes)
 
     for i, cls in enumerate(classes):
         class_dir = os.path.join(data_dir, cls)

@@ -119,12 +119,12 @@ NN = NeuralNetwork(
     input_size=(64, 64),
     learning_rate=1e-4,
     weight_decay=1e-5,
-    dropout=[0.3, 0.2, 0.2, 0.1, 0.1]
+    dropout=[0.3, 0.3, 0.2, 0.1, 0.1]
 )
 trainer = Trainer(
     NN=NN,
     use_lr_decay=True,
     lr_patience=5,
-    experiment_name="Exp3",
+    experiment_name="Exp4",
 )
 trainer.train()
