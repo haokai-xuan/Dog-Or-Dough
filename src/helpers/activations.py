@@ -5,6 +5,7 @@ def relu(Z):
     return A, Z
 
 def softmax(Z):
+    Z = Z - np.max(Z, axis=0, keepdims=True)
     A = np.exp(Z)
     A /= np.sum(A, axis=0, keepdims=True)
     return A, Z

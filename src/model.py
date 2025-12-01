@@ -5,7 +5,7 @@ class NeuralNetwork:
     def __init__(
         self,
         layers=[64, 64, 32, 2],
-        input_size=12288,
+        input_size=(64, 64),
         learning_rate=0.01,
         weight_decay=0.0,
         dropout=None,
@@ -36,7 +36,7 @@ class NeuralNetwork:
             self._initialize_parameters()
 
     def _initialize_parameters(self):
-        layer_dims = [self.input_size * self.input_size * (3 if self.color else 1)] + self.layers
+        layer_dims = [self.input_size[0] * self.input_size[1] * (3 if self.color else 1)] + self.layers
 
         for l in range(1, len(layer_dims)):
             input_dim = layer_dims[l - 1]
@@ -96,7 +96,7 @@ class NeuralNetwork:
 
     def compute_cost(self, AL, Y):
         m = Y.shape[1]
-        cross_entropy_cost = -np.sum(Y * np.log(AL)) / m
+        cross_entropy_cost = -np.sum(Y * np.log(AL + self.epsilon)) / m
         frobenius_norm = 0
         for l in range(1, len(self.layers) + 1):
             W = self.parameters["W" + str(l)]
@@ -209,7 +209,7 @@ class NeuralNetwork:
 
         if "layers" in data:
             self.layers = data["layers"].tolist() if isinstance(data["layers"], np.ndarray) else data["layers"]
-            self.input_size = int(data["input_size"])
+            self.input_size = tuple(map(int, data["input_size"]))
             self.learning_rate = float(data["learning_rate"])
             self.weight_decay = float(data["weight_decay"])
             self.dropout = data["dropout"].tolist() if data["dropout"] is not None else None
