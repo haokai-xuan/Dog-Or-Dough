@@ -2,11 +2,11 @@ import numpy as np
 import matplotlib.pyplot as plt
 import os
 
-def get_stats(y_true, y_pred):
+def get_stats(y_true, y_pred, all_classes):
     y_true = np.array(y_true)
     y_pred = np.array(y_pred)
 
-    classes = np.unique(y_true)
+    classes = np.array(all_classes)
 
     per_class_precision = {}
     per_class_recall = {}

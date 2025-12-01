@@ -66,7 +66,7 @@ class Trainer:
                 t += 1
 
             predictions, ground_truth, val_loss = self._evaluate(self.val_X, self.val_Y)
-            stats = get_stats(predictions, ground_truth)
+            stats = get_stats(predictions, ground_truth, list(range(len(self.classes))))
 
             avg_train_loss = np.mean(epoch_train_losses)
             train_losses.append(avg_train_loss)
@@ -115,16 +115,19 @@ class Trainer:
 
 
 NN = NeuralNetwork(
-    layers=[64, 32, 32, 16, 8, 2],
+    layers=[128, 64, 32, 16, 2],
     input_size=(64, 64),
     learning_rate=1e-4,
     weight_decay=1e-5,
-    dropout=[0.3, 0.3, 0.2, 0.1, 0.1]
+    dropout=[0.3, 0.2, 0.1, 0.0],
 )
 trainer = Trainer(
     NN=NN,
     use_lr_decay=True,
-    lr_patience=5,
-    experiment_name="Exp4",
+    lr_patience=10,
+    patience=25,
+    min_lr=1e-6,
+    experiment_name="Exp6",
+    aug_pipeline=get_augmentation_pipeline()
 )
 trainer.train()

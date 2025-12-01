@@ -36,16 +36,7 @@ def evaluate(model, test_dir, class_names):
     predictions, probabilities = model.predict(X_test)
     ground_truth = np.argmax(Y_test, axis=0)
     
-    # DEBUG: Print what's happening
-    print(f"DEBUG: Number of test samples: {len(ground_truth)}")
-    print(f"DEBUG: Predictions shape: {predictions.shape}, unique values: {np.unique(predictions)}")
-    print(f"DEBUG: Ground truth shape: {ground_truth.shape}, unique values: {np.unique(ground_truth)}")
-    print(f"DEBUG: Predictions: {predictions[:10]}")  # First 10
-    print(f"DEBUG: Ground truth: {ground_truth[:10]}")  # First 10
-    print(f"DEBUG: Number of matches: {np.sum(predictions == ground_truth)}")
-    print(f"DEBUG: Class names: {class_names}")
-    
-    stats = get_stats(predictions, ground_truth)
+    stats = get_stats(predictions, ground_truth, list(range(len(class_names))))
     
     return stats, predictions, ground_truth
 
