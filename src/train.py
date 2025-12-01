@@ -74,7 +74,7 @@ class Trainer:
 
             if stats["macro_f1"] > best_f1:
                 best_f1 = stats["macro_f1"]
-                self.NN.save_model(os.path.join(self.script_directory, f"../{self.ckpt_folder_name}/{self.experiment_name}/model_parameters_{epoch}.npz"))
+                self.NN.save_model(os.path.join(self.script_directory, f"../{self.ckpt_folder_name}/{self.experiment_name}/model_parameters_{epoch + 1}.npz"))
 
             print("=" * 60)
             print(f"Epoch {epoch + 1}/{self.epochs}")
