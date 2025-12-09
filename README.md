@@ -4,18 +4,18 @@ A multi-class image classification project that in the current implementation di
 
 ## 📋 Table of Contents
 
-- [Overview](#overview)
-- [Features](#features)
-- [Project Structure](#project-structure)
-- [Installation](#installation)
-- [Usage](#usage)
-- [Architecture](#architecture)
-- [Hyperparameters](#️-hyperparameters)
-- [Results](#results)
+- [Overview](#-overview)
+- [Features](#-features)
+- [Project Structure](#-project-structure)
+- [Installation](#-installation)
+- [Usage](#-usage)
+- [Architecture](#-Architecture)
+- [Results](#-results)
 
 ## 🎯 Overview
 
 This project implements a complete deep learning pipeline for multi-class image classification:
+
 - **Task**: Classify images as either "dog" or "dough"
 - **Approach**: Custom neural network built from scratch using only NumPy
 - **Input**: RGB images resized to 64×64 pixels
@@ -61,24 +61,32 @@ Dog-Or-Dough/
 ### Prerequisites
 
 - Python 3.7+
+- NumPy
+- OpenCV (cv2)
+- Matplotlib
+- tqdm
+- Albumentations
 
 ### Setup
 
 1. Clone the repository:
+
 ```bash
 git clone <repository-url>
 cd Dog-Or-Dough
 ```
 
 2. Create a virtual environment (recommended):
+
 ```bash
 python -m venv env
 source env/bin/activate  # On Windows: env\Scripts\activate
 ```
 
-3. Install dependencies from `requirements.txt`:
+3. Install dependencies:
+
 ```bash
-pip install -r requirements.txt
+pip install numpy opencv-python matplotlib tqdm albumentations
 ```
 
 ## 💻 Usage
@@ -119,6 +127,7 @@ trainer.train()
 ```
 
 Run training:
+
 ```bash
 cd src
 python train.py
@@ -129,16 +138,19 @@ python train.py
 Evaluate the model against the ground truths of the test data:
 
 1. Edit `src/eval.py` to set the model path:
+
 ```python
 model_path = os.path.join(script_dir, "../checkpoints/Exp6/model_parameters_153.npz")
 ```
 
 2. Set mode to `"evaluate"`:
+
 ```python
 mode = "evaluate"
 ```
 
 3. Run evaluation:
+
 ```bash
 python eval.py
 ```
@@ -148,6 +160,7 @@ python eval.py
 Perform inference on new images:
 
 1. Edit `src/eval.py`:
+
 ```python
 mode = "inference"
 ```
@@ -155,15 +168,17 @@ mode = "inference"
 2. Place images in `data/test/` or modify the image paths in the script
 
 3. Run inference:
+
 ```bash
 python eval.py
 ```
 
 ## 🏗️ Architecture
 
-### Neural Network Structure
+### Current Neural Network Structure
 
 **Best Experiment:**
+
 - **Input Layer**: 64×64×3 = 12,288 features
 - **Hidden Layer 1**: 128 neurons (ReLU, Dropout 0.3)
 - **Hidden Layer 2**: 64 neurons (ReLU, Dropout 0.2)
@@ -173,90 +188,59 @@ python eval.py
 
 **Total Trainable Parameters**: ~1.6M
 
-### Key Components
-
-1. **Forward Propagation**
-   - Linear transformation: `Z = W·A + b`
-   - ReLU activation for hidden layers
-   - Softmax activation for output layer
-   - Dropout during training (disabled during inference)
-
-2. **Backward Propagation**
-   - Cross-entropy loss with L2 regularization
-   - Gradient computation via chain rule
-   - Dropout mask applied to gradients
-
-3. **Optimization**
-   - **Adam Optimizer**: Combines momentum (β₁=0.9) and RMSprop (β₂=0.999)
-   - Bias correction for moving averages
-   - Adaptive learning rates per parameter
-
-4. **Regularization**
-   - **Dropout**: Randomly zeroes activations during training (0.3 → 0.2 → 0.1 → 0.0)
-   - **L2 Weight Decay**: Penalizes large weights (λ=1e-5)
-
-## ⚙️ Hyperparameters
-
-All key tunable hyperparameters are exposed either in `model.py` (via the `NeuralNetwork` constructor) or in `train.py` (via the `Trainer` constructor):
-
-- **Model architecture**
-  - **`layers`**: List of layer sizes, including the output layer (e.g. `[128, 64, 32, 16, 2]`).
-  - **`input_size`**: Input spatial resolution as `(height, width)` (default `(64, 64)`).
-  - **`color`**: Whether to treat images as RGB (`True`) or grayscale (`False`).
-
-- **Optimization (Adam)**
-  - **`learning_rate`**: Initial learning rate for Adam (e.g. `1e-4`).
-  - **`beta1`**: Exponential decay rate for the first moment estimates (default `0.9`).
-  - **`beta2`**: Exponential decay rate for the second moment estimates (default `0.999`).
-  - **`epsilon`**: Small constant for numerical stability in Adam (default `1e-8`).
-
-- **Regularization**
-  - **`weight_decay`**: L2 regularization strength (e.g. `1e-5`).
-  - **`dropout`**: List of dropout rates for each hidden layer (e.g. `[0.3, 0.2, 0.1, 0.0]`).
-
-- **Training loop (Trainer)**
-  - **`epochs`**: Maximum number of training epochs.
-  - **`batch_size`**: Number of samples per batch.
-  - **`patience`**: Early stopping patience (number of epochs without validation loss improvement).
-  - **`use_lr_decay`**: Whether to enable learning rate decay on plateau.
-  - **`lr_decay`**: Multiplicative factor to decay the learning rate (e.g. `0.5`).
-  - **`lr_patience`**: Number of epochs without improvement before decaying the learning rate.
-  - **`min_lr`**: Lower bound for the learning rate when decay is enabled.
-
-- **Data and experiment setup**
-  - **`data_folder_name`**: Name of the data folder (default `"data"`).
-  - **`ckpt_folder_name`**: Folder for saving checkpoints (default `"checkpoints"`).
-  - **`experiment_name`**: Sub-folder name under checkpoints to separate runs (e.g. `"Exp6"`).
-  - **`aug_pipeline`**: Albumentations pipeline used for data augmentation (can be `None` to disable).
-
 ## 🎯 Results
 
-### Experiment 6 Performance
+Best model's performance and additional details.
 
-The best model from Experiment 6 achieved the following performance:
+### Training Stats:
 
-- **Model Checkpoint**: `checkpoints/Exp6/model_parameters_153.npz`
-- **Training Epochs**: 153 (early stopped based on validation loss)
+**Losses**
+| Dataset | Loss |
+|--------------|--------|
+| Train | 0.4310 |
+| Validation | 0.4354 |
 
-**Current Hyperparameter Choice (Exp6)**
+---
 
-- **Architecture**: `[128, 64, 32, 16, 2]`
-- **Input Size**: `(64, 64)` with 3 color channels (RGB)
-- **Optimizer**: Adam (`learning_rate=1e-4`, `beta1=0.9`, `beta2=0.999`, `epsilon=1e-8`)
-- **Regularization**:
-  - Weight decay (`L2`): `1e-5`
-  - Dropout: `[0.3, 0.2, 0.1, 0.0]` on the four hidden layers
-- **Training Loop**:
-  - Batch size: `32`
-  - Max epochs: `200`
-  - Early stopping patience: `25`
-  - LR decay: enabled with factor `0.5`, patience `10`, minimum LR `1e-6`
-  - Data augmentation: enabled via `get_augmentation_pipeline()` (flip, rotate, brightness/contrast)
+**Overall Accuracy**  
+Accuracy: 0.8052
 
-**Loss Curve**
+---
 
-The training and validation loss curves for Experiment 6 are shown below (saved by the training script as part of the run):
+**Class-wise Metrics**  
+| Class | Precision | Recall | F1-score |
+|-------|-----------|--------|----------|
+| dog | 0.7606 | 0.8328 | 0.7950 |
+| dough | 0.8493 | 0.7824 | 0.8145 |
 
-![Training and Validation Loss Curve](checkpoints/Exp6/loss_curve.png)
+---
 
-*Note: Specific test metrics (accuracy, precision, recall, F1) should be obtained by running the evaluation script on your own test set.*
+**Macro Metrics**  
+| Metric | Value |
+|-----------------|--------|
+| Macro Precision | 0.8049 |
+| Macro Recall | 0.8076 |
+| Macro F1 | 0.8047 |
+
+---
+
+### Experiment Hyperparameters:
+
+| Component          | Parameter             | Value                             |
+| ------------------ | --------------------- | --------------------------------- |
+| **Neural Network** | Layers                | [128, 64, 32, 16, 2]              |
+|                    | Input size            | (64, 64)                          |
+|                    | Learning rate         | 1e-4                              |
+|                    | Weight decay          | 1e-5                              |
+|                    | Dropout               | [0.3, 0.2, 0.1, 0.0]              |
+| **Trainer**        | Use LR decay          | True                              |
+|                    | LR patience           | 10                                |
+|                    | Patience              | 25                                |
+|                    | Minimum LR            | 1e-6                              |
+|                    | Augmentation pipeline | See `get_augmentation_pipeline()` |
+
+> **Note:** Dropout values correspond to each hidden layer except the output layer. The augmentation pipeline is applied during training to increase data diversity.
+
+### Loss Curve:
+
+![Training and Validation Loss Curve](loss_curve.png)
