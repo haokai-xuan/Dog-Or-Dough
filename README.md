@@ -9,7 +9,7 @@ A multi-class image classification project that in the current implementation di
 - [Project Structure](#-project-structure)
 - [Installation](#-installation)
 - [Usage](#-usage)
-- [Architecture](#-Architecture)
+- [Architecture](#️-architecture)
 - [Results](#-results)
 
 ## 🎯 Overview
