@@ -19,6 +19,7 @@ const UploadArea = () => {
   }, [])
 
   useEffect(() => {
+    setPrediction(null)
     return () => {
       if (file) URL.revokeObjectURL(file.preview)
     }
@@ -40,11 +41,29 @@ const UploadArea = () => {
   })
 
   const [prediction, setPrediction] = useState<{dog: number; dough: number} | null>(null)
-  const handleInference = () => {
-    const mockDog = Math.floor(Math.random() * 100);
-    const mockDough = 100 - mockDog;
+  const handleInference = async () => {
+    if (!file) return;
 
-    setPrediction({ dog: mockDog, dough: mockDough });
+    const formData = new FormData()
+    formData.append("file", file)
+    
+    try {
+      const res = await fetch("http://127.0.0.1:9999/predict", {
+        method: "POST",
+        body: formData
+      });
+
+      if (!res.ok) throw new Error("Request failed");
+
+      const data = await res.json();
+      const dog = Number((data["dog"] * 100).toFixed(2))
+      const dough = Number((data["dough"] * 100).toFixed(2))
+      setPrediction({ dog: dog, dough: dough });
+      // console.log("Server response:", data);
+    }
+    catch (err) {
+      console.error(err);
+    }
   }
   
   return (
