@@ -14,9 +14,9 @@ sys.path.insert(0, str(REPO_ROOT / "src"))
 from model import NeuralNetwork
 NN = NeuralNetwork(load_path="../../checkpoints/Exp3/model_parameters_86.npz")
 
-api = FastAPI()
+app = FastAPI()
 
-api.add_middleware(
+app.add_middleware(
     CORSMiddleware,
     allow_origins=["https://dog-or-dough.vercel.app"],
     allow_credentials=True,
@@ -24,7 +24,7 @@ api.add_middleware(
     allow_headers=["*"],
 )
 
-@api.post("/predict")
+@app.post("/predict")
 async def predict(file: UploadFile = File(...)):
     contents = await file.read()
     image = Image.open(io.BytesIO(contents))
