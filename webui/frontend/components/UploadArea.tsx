@@ -4,6 +4,7 @@ import Image from "next/image"
 import { useCallback, useEffect, useState } from "react"
 import { useDropzone } from "react-dropzone"
 import PredictionDisplay from "./PredictionDisplay";
+import { Link, Element } from "react-scroll";
 
 type PreviewFile = File & {preview: string}
 
@@ -109,18 +110,22 @@ const UploadArea = () => {
             </div>
           </div>
 
-          <button onClick={handleInference} className="bg-purple-400 cursor-pointer hover:bg-purple-600 text-white font-semibold px-6 py-3 rounded-xl">
-            Inference
-          </button>
+          <Link to="prediction-display" smooth={true} duration={500}>
+            <button onClick={handleInference} className="bg-purple-400 cursor-pointer hover:bg-purple-600 text-white font-semibold px-6 py-3 rounded-xl">
+              Inference
+            </button>
+          </Link>
         </div>
       }
-      {
-        file && prediction &&
-        <>
-          <hr className="w-128 self-center h-0.25 bg-gray-400 border-0 rounded-md my-4"/>
-          <PredictionDisplay dog={prediction.dog} dough={prediction.dough} />
-        </>
-      }
+      <Element name="prediction-display">
+        {
+          file && prediction &&
+          <>
+            <hr className="w-128 h-0.25 mx-auto bg-gray-400 border-0 rounded-md my-4"/>
+            <PredictionDisplay dog={prediction.dog} dough={prediction.dough} />
+          </>
+        }
+      </Element>
     </>
   )
 }

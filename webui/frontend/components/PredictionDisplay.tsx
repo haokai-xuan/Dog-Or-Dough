@@ -11,6 +11,8 @@ const PredictionDisplay: React.FC<PredictionProps> = ({dog, dough}) => {
   const [animatedDough, setAnimatedDough] = useState(0);
 
   useEffect(() => {
+    setAnimatedDog(0)
+    setAnimatedDough(0)
     const timer = setTimeout(() => {
       setAnimatedDog(dog);
       setAnimatedDough(dough);
