@@ -49,7 +49,8 @@ const UploadArea = () => {
     formData.append("file", file)
     
     try {
-      const res = await fetch("http://127.0.0.1:9999/predict", {
+      const API_BASE = process.env.NEXT_PUBLIC_API_URL
+      const res = await fetch(`${API_BASE}/predict`, {
         method: "POST",
         body: formData
       });

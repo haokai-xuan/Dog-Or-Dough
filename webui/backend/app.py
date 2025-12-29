@@ -18,7 +18,7 @@ api = FastAPI()
 
 api.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000"],
+    allow_origins=["https://dog-or-dough.vercel.app"],
     allow_credentials=True,
     allow_methods=["POST"],
     allow_headers=["*"],
