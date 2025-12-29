@@ -9,10 +9,11 @@ import sys
 from pathlib import Path
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
+BASE_DIR = Path(__file__).resolve().parent
 sys.path.insert(0, str(REPO_ROOT / "src"))
 
 from model import NeuralNetwork
-NN = NeuralNetwork(load_path="./model_parameters.npz")
+NN = NeuralNetwork(load_path=str(BASE_DIR / "model_parameters.npz"))
 
 app = FastAPI()
 
