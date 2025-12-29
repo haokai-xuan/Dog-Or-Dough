@@ -102,6 +102,7 @@ const UploadArea = () => {
                   w-8 h-8
                   flex items-center justify-center
                   shadow-md
+                  cursor-pointer
                 ">
                 x
               </button>
