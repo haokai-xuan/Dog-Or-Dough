@@ -12,7 +12,7 @@ REPO_ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(REPO_ROOT / "src"))
 
 from model import NeuralNetwork
-NN = NeuralNetwork(load_path="../../checkpoints/Exp3/model_parameters_86.npz")
+NN = NeuralNetwork(load_path="./model_parameters.npz")
 
 app = FastAPI()
 
