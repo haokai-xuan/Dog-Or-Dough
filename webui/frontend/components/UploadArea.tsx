@@ -70,7 +70,7 @@ const UploadArea = () => {
     <>
       <div
         {...getRootProps()}
-        className="mt-10 border-2 border-dashed border-gray-400 rounded-2xl p-10 text-center cursor-pointer transition hover:border-gray-600 h-64 flex flex-col justify-center items-center mx-auto max-w-md"
+        className="w-full mt-10 border-2 border-dashed border-gray-400 rounded-2xl p-10 text-center cursor-pointer transition hover:border-gray-600 h-64 flex flex-col justify-center items-center mx-auto max-w-md"
       >
         <input {...getInputProps()} />
         {isDragActive ? (
@@ -114,7 +114,13 @@ const UploadArea = () => {
           </button>
         </div>
       }
-      {file && prediction && <PredictionDisplay dog={prediction.dog} dough={prediction.dough} />}
+      {
+        file && prediction &&
+        <>
+          <hr className="w-128 self-center h-0.25 bg-gray-400 border-0 rounded-md my-4"/>
+          <PredictionDisplay dog={prediction.dog} dough={prediction.dough} />
+        </>
+      }
     </>
   )
 }

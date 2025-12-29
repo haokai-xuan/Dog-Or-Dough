@@ -7,7 +7,7 @@ export const metadata = {
 
 export default function Home() {
   return (
-    <main className="overflow-hidden min-h-screen px-6">
+    <main className="overflow-hidden min-h-screen px-6 flex flex-col">
       <header className="pt-12">
         <h1 className="text-5xl font-extrabold text-center">
           <span className="text-purple-500">Dog</span> or <span className="text-yellow-400">Dough</span>
@@ -17,6 +17,17 @@ export default function Home() {
         </p>
       </header>
       <UploadArea />
+      <div className="mt-auto pt-60">
+        <footer className="-mx-6 py-6 text-center text-sm text-gray-400 bg-gray-900">
+          <a
+            href="https://github.com/haokai-xuan/Dog-Or-Dough"
+            target="_blank"
+            className="text-gray-400 hover:text-gray-300"
+          >
+            Github
+          </a>
+        </footer>
+      </div>
     </main>
   );
 }
