@@ -8,6 +8,7 @@ export const metadata = {
 export default function Home() {
   return (
     <main className="overflow-hidden min-h-screen px-6 flex flex-col">
+      <div className="fixed inset-0 -z-20 bg-gradient-to-br from-gray-950 via-slate-900 to-indigo-950" />
       <header className="pt-12">
         <h1 className="text-5xl font-extrabold text-center">
           <span className="text-purple-500">Dog</span> or <span className="text-yellow-400">Dough</span>
@@ -17,8 +18,8 @@ export default function Home() {
         </p>
       </header>
       <UploadArea />
-      <div className="mt-auto pt-60">
-        <footer className="-mx-6 py-6 text-center text-sm text-gray-400 bg-gray-900">
+      <div className="mt-auto">
+        <footer className="mt-60 -mx-6 py-6 text-center text-sm text-gray-400 bg-gray-900">
           <a
             href="https://github.com/haokai-xuan/Dog-Or-Dough"
             target="_blank"
