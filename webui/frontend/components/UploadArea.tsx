@@ -49,16 +49,10 @@ const UploadArea = () => {
     formData.append("file", file)
     
     try {
-      const API_BASE = process.env.NEXT_PUBLIC_API_URL
-      const res = await fetch(`${API_BASE}/predict`, {
+      const res = await fetch("/api/predict", {
         method: "POST",
         body: formData,
-        headers: {
-          "api-key": process.env.NEXT_PUBLIC_API_SECRET!
-        }
-      });
-
-      if (!res.ok) throw new Error("Request failed");
+      })
 
       const data = await res.json();
       const dog = Number((data["dog"] * 100).toFixed(2))
