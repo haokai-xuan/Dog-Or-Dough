@@ -52,7 +52,10 @@ const UploadArea = () => {
       const API_BASE = process.env.NEXT_PUBLIC_API_URL
       const res = await fetch(`${API_BASE}/predict`, {
         method: "POST",
-        body: formData
+        body: formData,
+        headers: {
+          "api-key": process.env.NEXT_PUBLIC_API_SECRET!
+        }
       });
 
       if (!res.ok) throw new Error("Request failed");

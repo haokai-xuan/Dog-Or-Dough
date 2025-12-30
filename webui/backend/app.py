@@ -1,4 +1,4 @@
-from fastapi import FastAPI, File, UploadFile
+from fastapi import FastAPI, File, UploadFile, Header, HTTPException
 from fastapi.responses import JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
 from PIL import Image
@@ -6,11 +6,14 @@ import io
 import numpy as np
 
 import sys
+import os
 from pathlib import Path
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
 BASE_DIR = Path(__file__).resolve().parent
 sys.path.insert(0, str(REPO_ROOT / "src"))
+
+API_TOKEN = os.getenv("API_TOKEN")
 
 from model import NeuralNetwork
 NN = NeuralNetwork(load_path=str(BASE_DIR / "model_parameters.npz"))
@@ -26,7 +29,10 @@ app.add_middleware(
 )
 
 @app.post("/predict")
-async def predict(file: UploadFile = File(...)):
+async def predict(file: UploadFile = File(...), api_key: str | None = Header(alias="api-key")):
+    if api_key != API_TOKEN:
+        raise HTTPException(status_code=401, detail="Unauthorized")
+    
     contents = await file.read()
     image = Image.open(io.BytesIO(contents))
 
