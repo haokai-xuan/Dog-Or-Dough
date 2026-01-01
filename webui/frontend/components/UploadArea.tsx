@@ -2,7 +2,7 @@
 
 import Image from "next/image"
 import { useCallback, useEffect, useState } from "react"
-import { useDropzone } from "react-dropzone"
+import { FileRejection, useDropzone } from "react-dropzone"
 import PredictionDisplay from "./PredictionDisplay";
 import { Link, Element } from "react-scroll";
 
@@ -10,13 +10,21 @@ type PreviewFile = File & {preview: string}
 
 const UploadArea = () => {
   const [file, setFile] = useState<PreviewFile | null>(null)
+  const [fileTooLarge, setFileTooLarge] = useState<boolean>(false)
+
   const onDrop = useCallback((acceptedFiles: File[]) => {
     if (!acceptedFiles.length) return
 
     const f = Object.assign(acceptedFiles[0], {
       preview: URL.createObjectURL(acceptedFiles[0])
     })
+    setFileTooLarge(false)
     setFile(f)
+  }, [])
+
+  const onDropRejected = useCallback((acceptedFiles: FileRejection[]) => {
+    setFile(null)
+    setFileTooLarge(true)
   }, [])
 
   useEffect(() => {
@@ -32,13 +40,14 @@ const UploadArea = () => {
 
   const {getRootProps, getInputProps, isDragActive} = useDropzone({
     onDrop,
+    onDropRejected,
     accept: {
       'image/jpeg': [],
       'image/png': [],
       'image/webp': [],
     },
     maxFiles: 1,
-    maxSize: 5000000 // 5MB
+    maxSize: 4500000 // 4.5MB
   })
 
   const [prediction, setPrediction] = useState<{dog: number; dough: number} | null>(null)
@@ -119,11 +128,17 @@ const UploadArea = () => {
         {
           file && prediction &&
           <>
-            <hr className="w-128 h-0.25 mx-auto bg-gray-400 border-0 rounded-md my-4"/>
+            <hr className="w-lg h-px mx-auto bg-gray-400 border-0 rounded-md my-4"/>
             <PredictionDisplay dog={prediction.dog} dough={prediction.dough} />
           </>
         }
       </Element>
+      {
+        fileTooLarge &&
+        <div className="text-red-500 text-center">
+          File limit exceeded (4.5MB)
+        </div>
+      }
     </>
   )
 }
