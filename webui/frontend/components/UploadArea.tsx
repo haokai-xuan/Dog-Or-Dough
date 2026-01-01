@@ -50,6 +50,37 @@ const UploadArea = () => {
     maxSize: 4500000 // 4.5MB
   })
 
+  useEffect(() => {
+    const handlePaste = (e: ClipboardEvent) => {
+      const items = e.clipboardData?.items
+      if (!items) return
+      for (let i = 0; i < items.length; i++) {
+        if (items[i].type.indexOf("image") !== -1) {
+          const blob = items[i].getAsFile()
+          if (!blob) return
+
+          if (blob.size > 4500000) {
+            setFile(null)
+            setFileTooLarge(true)
+            return
+          }
+
+          const file = new File([blob], "pasted-img.png", {type: blob.type})
+          const f = Object.assign(file, {
+            preview: URL.createObjectURL(file)
+          })
+          setFileTooLarge(false)
+          setFile(f)
+          e.preventDefault()
+          return
+        }
+      }
+    }
+
+    window.addEventListener("paste", handlePaste)
+    return () => window.removeEventListener("paste", handlePaste)
+  }, [])
+
   const [prediction, setPrediction] = useState<{dog: number; dough: number} | null>(null)
   const [handlingInference, setHandlingInference] = useState<boolean>(false)
   const [error, setError] = useState<string | null>(null)
@@ -108,6 +139,7 @@ const UploadArea = () => {
             <button className="bg-purple-400 p-3 rounded-2xl hover:bg-purple-600 cursor-pointer">
               Select Image
             </button>
+            <p className="text-purple-200 text-sm">or paste</p>
             <p className="mt-5 text-purple-200 text-xs">Allowed file types: All image formats</p>
           </>
         )}

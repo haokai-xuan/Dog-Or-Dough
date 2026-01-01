@@ -1,8 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { Z_UNKNOWN } from 'zlib'
 
 const requests = new Map<string, {count: number, resetAt: number}>()
-const MAX_REQUESTS = 10
+const MAX_REQUESTS = 100
 const WINDOW_MS = 60000
 
 export async function POST(req: NextRequest) {
