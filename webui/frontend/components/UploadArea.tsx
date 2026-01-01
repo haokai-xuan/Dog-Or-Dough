@@ -52,10 +52,12 @@ const UploadArea = () => {
 
   const [prediction, setPrediction] = useState<{dog: number; dough: number} | null>(null)
   const [handlingInference, setHandlingInference] = useState<boolean>(false)
+  const [error, setError] = useState<string | null>(null)
   const handleInference = async () => {
     if (!file) return;
 
     setHandlingInference(true)
+    setError(null)
     const formData = new FormData()
     formData.append("file", file)
     
@@ -66,13 +68,23 @@ const UploadArea = () => {
       })
 
       const data = await res.json();
+
+      if (res.status === 429) {
+        setError(data.error + (data.retryAfter ? `(${data.retryAfter}s)` : ""))
+        return
+      }
+      if (data.error) {
+        setError(data.error)
+        return
+      }
+
       const dog = Number((data["dog"] * 100).toFixed(2))
       const dough = Number((data["dough"] * 100).toFixed(2))
       setPrediction({ dog: dog, dough: dough });
       // console.log("Server response:", data);
     }
     catch (err) {
-      console.error(err);
+      setError("Request failed, please try again.")
     }
     finally {
       setHandlingInference(false)
@@ -169,6 +181,12 @@ const UploadArea = () => {
         fileTooLarge &&
         <div className="text-red-500 text-center">
           File limit exceeded (4.5MB)
+        </div>
+      }
+      {
+        error &&
+        <div className="text-red-500 text-center">
+          {error}
         </div>
       }
     </>

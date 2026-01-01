@@ -1,6 +1,30 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { Z_UNKNOWN } from 'zlib'
+
+const requests = new Map<string, {count: number, resetAt: number}>()
+const MAX_REQUESTS = 10
+const WINDOW_MS = 60000
 
 export async function POST(req: NextRequest) {
+  // Check rate limit
+  const ip = req.headers.get("x-forwarded-for")?.split(",")[0] || req.headers.get("x-real-ip") || "unknown"
+  const now = Date.now()
+  const record = requests.get(ip)
+
+  if (record && now < record.resetAt) {
+    if (record.count > MAX_REQUESTS) {
+      const retryAfter = Math.ceil((record.resetAt - now) / 1000)
+      return NextResponse.json(
+        {error: "Rate limit exceeded. Please try again later.", retryAfter},
+        {status: 429, headers: {"Retry-After": retryAfter.toString()}}
+      )
+    }
+    record.count++
+  }
+  else {
+    requests.set(ip, {count: 1, resetAt: now + WINDOW_MS})
+  }
+
   const apiUrl = process.env.API_URL
   const apiSecret = process.env.API_SECRET
 
