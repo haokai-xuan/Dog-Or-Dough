@@ -245,6 +245,7 @@ Accuracy: 0.8052
 
 ![Training and Validation Loss Curve](loss_curve.png)
 
+
 ## 🐍 PyTorch Implementation
 
 In addition to the custom NumPy-based implementation, a **PyTorch version** of the Dog-or-Dough classifier was implemented using `torchvision.models.MobileNet_V3_Large` as the backbone for transfer learning:
@@ -264,3 +265,33 @@ The model was trained on the same dataset with the augmentation pipeline applied
 ![PyTorch Loss Curve](./pytorch_src/loss_curve.png)
 
 > The loss curve indicates convergence and stability during training.
+
+### Training Stats:
+
+**Losses**
+| Dataset | Loss |
+|--------------|--------|
+| Train | 0.0056 |
+| Validation | 0.0042 |
+
+---
+
+**Overall Accuracy**  
+Accuracy: 0.9986
+
+---
+
+**Class-wise Metrics**  
+| Class | Precision | Recall | F1-score |
+|-------|-----------|--------|----------|
+| dog | 1.0000 | 0.9990 | 0.9995
+| dough | 0.9990 | 1.0000 |0.9995
+
+---
+
+**Macro Metrics**  
+| Metric | Value |
+|-----------------|--------|
+| Macro Precision | 0.9995 |
+| Macro Recall | 0.9995 |
+| Macro F1 | 0.9995 |
