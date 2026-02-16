@@ -3,14 +3,14 @@
 A multi-class image classification project that in the current implementation distinguishes between dogs and bread (dough) using a custom neural network implementation built from scratch with NumPy. This project demonstrates deep learning fundamentals including forward/backward propagation, optimization algorithms, and regularization techniques.
 
 ## 📋 Table of Contents
-- [Overview](#overview)
-- [Features](#features)
-- [Project Structure](#project-structure)
-- [Installation](#installation)
-- [Usage](#usage)
-- [Architecture](#architecture)
-- [Results](#results)
-- [PyTorch Implementation](#pytorch-implementation)
+- [Overview](#-overview)
+- [Features](#-features)
+- [Project Structure](#-project-structure)
+- [Installation](#-installation)
+- [Usage](#-usage)
+- [Architecture](#️-architecture)
+- [Results](#-results)
+- [Pytorch Implementation](#-pytorch-implementation)
 
 ## 🎯 Overview
 
