@@ -3,14 +3,14 @@
 A multi-class image classification project that in the current implementation distinguishes between dogs and bread (dough) using a custom neural network implementation built from scratch with NumPy. This project demonstrates deep learning fundamentals including forward/backward propagation, optimization algorithms, and regularization techniques.
 
 ## 📋 Table of Contents
-
-- [Overview](#-overview)
-- [Features](#-features)
-- [Project Structure](#-project-structure)
-- [Installation](#-installation)
-- [Usage](#-usage)
-- [Architecture](#️-architecture)
-- [Results](#-results)
+- [Overview](#overview)
+- [Features](#features)
+- [Project Structure](#project-structure)
+- [Installation](#installation)
+- [Usage](#usage)
+- [Architecture](#architecture)
+- [Results](#results)
+- [PyTorch Implementation](#pytorch-implementation)
 
 ## 🎯 Overview
 
@@ -244,3 +244,23 @@ Accuracy: 0.8052
 ### Loss Curve:
 
 ![Training and Validation Loss Curve](loss_curve.png)
+
+## 🐍 PyTorch Implementation
+
+In addition to the custom NumPy-based implementation, a **PyTorch version** of the Dog-or-Dough classifier was implemented using `torchvision.models.MobileNet_V3_Large` as the backbone for transfer learning:
+
+- **Backbone**: `MobileNet_V3_Large` pretrained on ImageNet V2
+- **Classifier Head**: Custom `nn.Linear` layers for 2-class output (dog / dough)  
+- **Loss**: `CrossEntropyLoss`  
+- **Optimizer**: `AdamW` with weight decay  
+- **Scheduler**: Linear warmup + Cosine Annealing
+- **Augmentations**: Random horizontal flip, rotation, color jitter, random perspective  
+- **Device**: GPU accelerated (`CUDA`)  
+
+The model was trained on the same dataset with the augmentation pipeline applied **on-the-fly**, and checkpointing was used to save the best model.
+
+**Loss Curve Visualization:**  
+
+![PyTorch Loss Curve](./pytorch_src/loss_curve.png)
+
+> The loss curve indicates convergence and stability during training.
