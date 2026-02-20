@@ -41,11 +41,12 @@ export async function POST(req: NextRequest) {
     )
   }
 
+  const model_type = req.nextUrl.searchParams.get('model_type') || 'Linear'
   const formData = await req.formData()
 
   try {
     // Send request to fastapi backend
-    const res = await fetch(`${apiUrl}/predict`, {
+    const res = await fetch(`${apiUrl}/predict?model_type=${encodeURIComponent(model_type)}`, {
       method: "POST",
       headers: {
         "api-key": apiSecret, // secret stays server-side

@@ -93,7 +93,8 @@ const UploadArea = () => {
     formData.append("file", file)
     
     try {
-      const res = await fetch("/api/predict", {
+      const type = new URLSearchParams({model_type: arch});
+      const res = await fetch(`/api/predict?${type.toString()}`, {
         method: "POST",
         body: formData,
       })
@@ -121,12 +122,31 @@ const UploadArea = () => {
       setHandlingInference(false)
     }
   }
+
+  const [arch, setArch] = useState<string>("Linear");
+  const archOptions = ["Linear", "Convolutional"];
   
   return (
     <>
+    <div className="flex justify-center items-center gap-3 mt-4">
+      <span className="font-medium">Architecture:</span>
+      <div className="inline-flex rounded-lg overflow-hidden border border-gray-400">
+        {archOptions.map((opt, idx) => (
+          <button
+            key={idx}
+            onClick={() => setArch(opt)}
+            className={`px-4 py-2 ${
+              arch === opt ? "bg-purple-600 text-white" : "bg-gray-300 text-gray-700"
+            } cursor-pointer`}
+          >
+            {opt}
+          </button>
+        ))}
+      </div>
+    </div>
       <div
         {...getRootProps()}
-        className="w-full mt-10 border-2 border-dashed border-gray-400 rounded-2xl p-10 text-center cursor-pointer transition hover:border-gray-600 h-64 flex flex-col justify-center items-center mx-auto max-w-md"
+        className="w-full mt-6 border-2 border-dashed border-gray-400 rounded-2xl p-10 text-center cursor-pointer transition hover:border-gray-600 h-64 flex flex-col justify-center items-center mx-auto max-w-md"
       >
         <input {...getInputProps()} />
         {isDragActive ? (

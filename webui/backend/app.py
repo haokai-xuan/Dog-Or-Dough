@@ -1,4 +1,4 @@
-from fastapi import FastAPI, File, UploadFile, Header, HTTPException
+from fastapi import FastAPI, File, UploadFile, Header, HTTPException, Query
 from fastapi.responses import JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
 from PIL import Image
@@ -15,8 +15,38 @@ sys.path.insert(0, str(REPO_ROOT / "src"))
 
 API_TOKEN = os.getenv("API_TOKEN")
 
+# Load custom NN
 from model import NeuralNetwork
 NN = NeuralNetwork(load_path=str(BASE_DIR / "model_parameters.npz"))
+
+# Load pytorch-trained onnx model
+import onnxruntime as ort
+import cv2
+session = ort.InferenceSession(BASE_DIR / "model.onnx", providers=["CPUExecutionProvider"])
+input_data = np.random.rand(1, 3, 224, 224).astype(np.float32)
+input_name = session.get_inputs()[0].name
+ort_inputs = {input_name: input_data}
+
+# Preprocess img for onnx inferencing
+def onnx_preprocess(img):
+    img = np.array(img.convert("RGB"))
+    img = img.astype(np.float32) / 255.0
+    img = cv2.resize(img, (232, 232), interpolation=cv2.INTER_LINEAR) # (H, W, C)
+
+    # Center crop
+    start_x, start_y = 4, 4
+    end_x, end_y = 228, 228
+    img = img[start_y:end_y, start_x:end_x]
+
+    img = img.transpose(2, 0, 1) # (C, H, W)
+
+    IMAGENET_MEAN = np.array([0.485, 0.456, 0.406], dtype=np.float32).reshape(3, 1, 1)
+    IMAGENET_STD = np.array([0.229, 0.224, 0.225], dtype=np.float32).reshape(3, 1, 1)
+
+    img = (img - IMAGENET_MEAN) / IMAGENET_STD
+
+    img = np.expand_dims(img, axis=0)
+    return img
 
 app = FastAPI()
 
@@ -29,25 +59,32 @@ app.add_middleware(
 )
 
 @app.post("/predict")
-async def predict(file: UploadFile = File(...), api_key: str | None = Header(alias="api-key")):
+async def predict(file: UploadFile = File(...), api_key: str | None = Header(alias="api-key"), model_type: str = Query(default="Linear")):
     if api_key != API_TOKEN:
         raise HTTPException(status_code=401, detail="Unauthorized")
     
     contents = await file.read()
     image = Image.open(io.BytesIO(contents))
 
-    # Preprocess
-    image = image.convert("RGB")
-    image = image.resize((64, 64), Image.Resampling.BILINEAR)
-    arr = np.asarray(image, dtype=np.float32) / 255.0 # (64, 64, 3) RGB
-    arr = arr[:, :, ::-1] # Network learned in BGR
-    arr = arr.transpose(2, 0, 1) # (H, W, C) -> (C, H, W)
-    arr = arr.reshape(-1, 1)
+    if model_type == "Linear":
+        image = image.convert("RGB")
+        image = image.resize((64, 64), Image.Resampling.BILINEAR)
+        arr = np.asarray(image, dtype=np.float32) / 255.0 # (64, 64, 3) RGB
+        arr = arr[:, :, ::-1] # Network learned in BGR
+        arr = arr.transpose(2, 0, 1) # (H, W, C) -> (C, H, W)
+        arr = arr.reshape(-1, 1)
 
-    # Run inference
-    _, probabilities = NN.predict(arr)
+        _, probs = NN.predict(arr)
+        probs = probs.flatten()
+    else:
+        input_tensor = onnx_preprocess(image)
+        outputs = session.run(None, {input_name: input_tensor})[0]
+        
+        shifted = outputs - np.max(outputs, axis=1, keepdims=True)
+        probs = np.exp(shifted) / np.sum(np.exp(shifted), axis=1, keepdims=True)
+        probs = probs.flatten()
 
     return JSONResponse({
-        "dog": probabilities[0, 0],
-        "dough": probabilities[1, 0]
+        "dog": float(probs[0]),
+        "dough": float(probs[1])
     })
