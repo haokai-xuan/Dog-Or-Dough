@@ -28,11 +28,9 @@ ort_inputs = {input_name: input_data}
 
 # Preprocess img for onnx inferencing
 def onnx_preprocess(img):
+    img = img.resize((232, 232), Image.Resampling.BILINEAR)
     img = np.array(img.convert("RGB"))
     img = img.astype(np.float32) / 255.0
-    img = Image.fromarray(img)
-    img = img.resize((232, 232), Image.Resampling.BILINEAR)
-    img = np.array(img)
 
     # Center crop
     start_x, start_y = 4, 4
