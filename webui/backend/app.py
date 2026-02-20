@@ -21,7 +21,6 @@ NN = NeuralNetwork(load_path=str(BASE_DIR / "model_parameters.npz"))
 
 # Load pytorch-trained onnx model
 import onnxruntime as ort
-import cv2
 session = ort.InferenceSession(BASE_DIR / "model.onnx", providers=["CPUExecutionProvider"])
 input_data = np.random.rand(1, 3, 224, 224).astype(np.float32)
 input_name = session.get_inputs()[0].name
@@ -31,7 +30,9 @@ ort_inputs = {input_name: input_data}
 def onnx_preprocess(img):
     img = np.array(img.convert("RGB"))
     img = img.astype(np.float32) / 255.0
-    img = cv2.resize(img, (232, 232), interpolation=cv2.INTER_LINEAR) # (H, W, C)
+    img = Image.fromarray(img)
+    img = img.resize((232, 232), Image.Resampling.BILINEAR)
+    img = np.array(img)
 
     # Center crop
     start_x, start_y = 4, 4
